@@ -1,19 +1,7 @@
 <template>
   <q-page>
     <q-form class="q-gutter-md q-pa-md">
-      <q-file
-        ref="fileRef"
-        v-model="formData.avatar"
-        label="Фото питомца"
-        accept="image/*"
-        max-files="1"
-        max-total-size="67108864"
-        @update:model-value="(v) => console.log(v)"
-      >
-        <template #prepend>
-          <q-icon name="photo_camera" />
-        </template>
-      </q-file>
+      <c-file v-model="formData.avatar" class="q-mx-auto" />
       <q-input
         v-model="formData.name"
         label="Кличка"
@@ -71,6 +59,7 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import CFile from 'components/custom-components/c-file.vue';
 import { type TPet } from 'src/types/Pet';
 import { usePetsStore } from 'src/stores/pets-store';
 import { typeList, genderList } from 'src/utils';

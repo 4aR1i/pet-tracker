@@ -2,8 +2,7 @@
   <q-item v-ripple.center clickable class="bg-white q-pa-lg">
     <q-item-section avatar>
       <q-avatar>
-        <!-- <img :src="petAvatar" /> -->
-        {{ petAvatar }}
+        <img :src="petAvatar" />
       </q-avatar>
     </q-item-section>
 

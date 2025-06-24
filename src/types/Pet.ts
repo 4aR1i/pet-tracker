@@ -4,7 +4,7 @@ export type TPet = {
   gender: number;
   type: number;
   birthDate: string;
-  avatar: File;
+  avatar: string;
   ownerId?: number;
   breed?: string;
   createdAt?: Date;
