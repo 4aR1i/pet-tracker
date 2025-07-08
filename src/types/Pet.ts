@@ -1,8 +1,10 @@
+import { type TDictionaryField } from "src/types";
+
 export type TPet = {
   id: number;
   name: string;
-  gender: number;
-  type: number;
+  gender: TDictionaryField;
+  type: TDictionaryField;
   birthDate: string;
   avatar: string;
   ownerId?: number;

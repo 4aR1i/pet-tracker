@@ -13,18 +13,14 @@
         :options="genderList"
         label="Пол"
         option-value="id"
-        option-label="value"
-        emit-value
-        map-options
+        option-label="title"
       />
       <q-select
         v-model="formData.type"
         :options="typeList"
         option-value="id"
-        option-label="value"
+        option-label="title"
         label="Вид"
-        emit-value
-        map-options
       />
       <q-input
         v-model="formData.birthDate"
@@ -75,8 +71,8 @@ async function addPet() {
 const formData = ref({
   id: Date.now(),
   name: undefined,
-  gender: 1,
-  type: 1,
+  gender: undefined,
+  type: undefined,
   birthDate: undefined,
   avatar: undefined,
 }) as unknown as Ref<TPet>;

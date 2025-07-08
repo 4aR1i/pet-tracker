@@ -2,13 +2,13 @@
   <q-item v-ripple.center clickable class="bg-white q-pa-lg">
     <q-item-section avatar>
       <q-avatar>
-        <img :src="petAvatar" />
+        <img :src="avatar" />
       </q-avatar>
     </q-item-section>
 
     <q-item-section>
       <q-item-label>{{ pet.name }}</q-item-label>
-      <q-item-label caption>{{ pet.type }}</q-item-label>
+      <q-item-label caption>{{ pet.type.title }}</q-item-label>
     </q-item-section>
 
     <q-item-section side>
@@ -18,15 +18,15 @@
 </template>
 
 <script lang="ts" setup>
-import { type TPet } from 'src/types/Pet';
 import { computed } from 'vue';
+import { type TPet } from 'src/types/Pet';
 
 type Props = {
   pet: TPet;
 };
 
 const props = defineProps<Props>();
-const petAvatar = computed(() => (props.pet.avatar ? props.pet.avatar : 'default'));
+const avatar = computed(() => (props.pet.avatar ? props.pet.avatar : 'default'));
 </script>
 
 <style lang="scss" scoped>
