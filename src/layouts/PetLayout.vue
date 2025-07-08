@@ -4,7 +4,6 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat icon="arrow_back" @click="$router.back()" />
-        <q-toolbar-title>{{ petName }}</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -21,25 +20,18 @@
         no-caps
         dense
       >
-        <q-route-tab icon="dashboard" label="Главная" :to="`/pet/${petId}/overview`" />
+        <q-route-tab icon="dashboard" label="Инфо" :to="`/pet/${petId}/overview`" />
         <q-route-tab icon="local_hospital" label="Прививки" :to="`/pet/${petId}/vaccinations`" />
-        <q-route-tab icon="monitor_weight" label="Вес" :to="`/pet/${petId}/weight`" />
-        <q-route-tab icon="medical_services" label="Лекарства" :to="`/pet/${petId}/medications`" />
+        <!-- <q-route-tab icon="monitor_weight" label="Вес" :to="`/pet/${petId}/weight`" />
+        <q-route-tab icon="medical_services" label="Лекарства" :to="`/pet/${petId}/medications`" /> -->
       </q-tabs>
     </q-footer>
   </q-layout>
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const petId = route.params.id
-defineProps({
-  petName: {
-    type: String,
-    required: true
-  }
-})
 </script>

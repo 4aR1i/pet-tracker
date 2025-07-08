@@ -1,5 +1,10 @@
 <template>
-  <q-item v-ripple.center clickable class="bg-white q-pa-lg">
+  <q-item
+    v-ripple.center
+    clickable
+    class="bg-white q-pa-lg"
+    @click="$router.push(`/pet/${pet.id}/overview`)"
+  >
     <q-item-section avatar>
       <q-avatar>
         <img :src="avatar" />

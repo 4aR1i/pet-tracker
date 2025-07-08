@@ -15,11 +15,13 @@
 <script lang="ts" setup>
 import PetMiniCard from 'src/components/PetMiniCard.vue';
 import { usePetsStore } from 'src/stores/pets-store';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const petsStore = usePetsStore();
 
-const pets = computed(() => petsStore.pets);
+const pets = computed(() => petsStore.petsList);
+
+onMounted(() => petsStore.loadPets());
 </script>
 
 <style lang="scss" scoped>

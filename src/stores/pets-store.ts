@@ -3,21 +3,31 @@ import { type TPet } from 'src/types/Pet';
 
 export const usePetsStore = defineStore('pets', {
   state: (): {
-    pets: TPet[];
+    petsMap: Record<number, TPet>;
   } => ({
-    pets: JSON.parse(localStorage.getItem('pets') || '[]'),
+    petsMap: {},
   }),
 
-  getters: {},
+  getters: {
+    petsList: (state) => {
+      return Object.values(state.petsMap);
+    },
+  },
 
   actions: {
-    addPet(data: TPet) {
-      this.pets.push(data);
+    addPet(pet: TPet) {
+      this.petsMap[pet.id] = pet;
       this.saveToLocalStorage();
     },
-
     saveToLocalStorage() {
-      localStorage.setItem('pets', JSON.stringify(this.pets));
+      localStorage.setItem('pets', JSON.stringify(this.petsList));
+    },
+    loadPets() {
+      const petsFromLS: TPet[] = JSON.parse(localStorage.getItem('pets') || '[]');
+      this.petsMap = petsFromLS.reduce(
+        (acc, curr) => ((acc[curr.id] = curr), acc),
+        {} as typeof this.petsMap,
+      );
     },
   },
 });
