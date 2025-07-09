@@ -14,7 +14,7 @@
       </q-btn>
       <div class="row">
         <div class="col-12 col-md-4 flex flex-center">
-          <c-file v-model="editedPet.avatar" class="q-mx-auto" />
+          <c-file v-model="editedPet.avatar" :disabled="!isEditing" class="q-mx-auto" />
         </div>
         <div class="col-12 col-md-8">
           <q-form class="q-gutter-md" @submit.prevent="saveChanges">

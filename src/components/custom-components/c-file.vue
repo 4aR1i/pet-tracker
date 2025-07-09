@@ -1,5 +1,9 @@
 <template>
-  <div class="photo-upload" @click="pickFile">
+  <div
+    class="photo-upload"
+    :class="{ 'photo-upload--disabled': disabled }"
+    @click="!disabled && pickFile()"
+  >
     <input ref="fileRef" type="file" accept="image/*" @change="handleFileChange" />
     <q-avatar size="150px" class="cursor-pointer relative-position">
       <img v-if="previewUrl" :src="previewUrl" />
@@ -15,6 +19,7 @@ import { ref, watch } from 'vue';
 
 const props = defineProps<{
   modelValue?: string;
+  disabled?: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'update:modelValue', payload: string): void;
@@ -74,6 +79,10 @@ watch(previewUrl, (v) => {
       object-fit: cover;
       display: block;
     }
+  }
+
+  &--disabled {
+    pointer-events: none;
   }
 }
 </style>

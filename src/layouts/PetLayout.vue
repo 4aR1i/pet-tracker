@@ -1,18 +1,15 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <!-- Верхний заголовок -->
     <q-header elevated>
       <q-toolbar>
-        <q-btn flat icon="arrow_back" @click="$router.back()" />
+        <q-btn flat icon="menu" @click="$router.push('/pets-list')" />
       </q-toolbar>
     </q-header>
 
-    <!-- Контент -->
     <q-page-container>
       <router-view />
     </q-page-container>
 
-    <!-- Нижнее меню -->
     <q-footer bordered class="bg-white text-grey">
       <q-tabs
         active-color="primary"
