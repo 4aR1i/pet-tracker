@@ -5,7 +5,7 @@
 
   <q-btn
     to="pets-add"
-    color="black"
+    color="primary"
     label="Добавить питомца"
     icon-right="add"
     class="q-pa-md q-mt-lg q-mx-auto"

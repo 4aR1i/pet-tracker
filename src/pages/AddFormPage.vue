@@ -58,7 +58,7 @@ import { useRouter } from 'vue-router';
 import CFile from 'components/custom-components/c-file.vue';
 import { type TPet } from 'src/types/Pet';
 import { usePetsStore } from 'src/stores/pets-store';
-import { typeList, genderList } from 'src/utils';
+import { typeList, genderList, isValidPastDate } from 'src/utils';
 
 const router = useRouter();
 const petsStore = usePetsStore();
@@ -76,13 +76,6 @@ const formData = ref({
   birthDate: undefined,
   avatar: undefined,
 }) as unknown as Ref<TPet>;
-
-function isValidPastDate(dateString: string): boolean {
-  const dateISOString = dateString.split('.').reverse().join('-');
-  const today = new Date();
-  const inputDate = new Date(dateISOString);
-  return inputDate <= today;
-}
 </script>
 
 <style lang="scss" scoped>

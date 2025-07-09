@@ -19,6 +19,12 @@ export const usePetsStore = defineStore('pets', {
       this.petsMap[pet.id] = pet;
       this.saveToLocalStorage();
     },
+    updatePet(updatedPet: TPet) {
+      if (this.petsMap[updatedPet.id]) {
+        this.petsMap[updatedPet.id] = updatedPet;
+        this.saveToLocalStorage();
+      }
+    },
     saveToLocalStorage() {
       localStorage.setItem('pets', JSON.stringify(this.petsList));
     },

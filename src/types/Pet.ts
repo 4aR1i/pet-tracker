@@ -7,7 +7,6 @@ export type TPet = {
   type: TDictionaryField;
   birthDate: string;
   avatar: string;
-  ownerId?: number;
   breed?: string;
-  createdAt?: Date;
+  weight?: number;
 };
