@@ -12,6 +12,9 @@ export const usePetsStore = defineStore('pets', {
     petsList: (state) => {
       return Object.values(state.petsMap);
     },
+    petById: (state) => {
+      return (petId: number) => state.petsMap[petId];
+    },
   },
 
   actions: {
@@ -34,6 +37,21 @@ export const usePetsStore = defineStore('pets', {
         (acc, curr) => ((acc[curr.id] = curr), acc),
         {} as typeof this.petsMap,
       );
+    },
+    loadPetById(petId: number): TPet | null {
+      if (this.petsMap[petId]) {
+        return this.petsMap[petId];
+      }
+
+      const petsFromLS: TPet[] = JSON.parse(localStorage.getItem('pets') || '[]');
+      const petFromLS = petsFromLS.find((pet) => pet.id === petId);
+
+      if (petFromLS) {
+        this.petsMap[petId] = petFromLS;
+        return petFromLS;
+      }
+
+      return null;
     },
   },
 });

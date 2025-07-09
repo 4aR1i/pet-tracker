@@ -23,6 +23,7 @@
               label="Кличка"
               :disable="!isEditing"
               :rules="[(val) => !!val || 'Обязательное поле']"
+              hide-bottom-space
             />
             <q-select
               v-model="editedPet.type"
@@ -81,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, type Ref } from 'vue';
+import { ref, computed, type Ref, onBeforeMount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CFile from 'components/custom-components/c-file.vue';
 import { usePetsStore } from 'src/stores/pets-store';
@@ -93,7 +94,7 @@ const router = useRouter();
 const petsStore = usePetsStore();
 
 const petId = computed(() => Number(route.params.id));
-const originalPet = computed<TPet | undefined>(() => petsStore.petsMap[petId.value]);
+const originalPet = computed<TPet | undefined>(() => petsStore.petById(petId.value));
 
 const editedPet = ref({
   id: 0,
@@ -108,11 +109,17 @@ const editedPet = ref({
 
 const isEditing = ref<boolean>(false);
 
-onMounted(async () => {
+onBeforeMount(async () => {
   if (originalPet.value) {
     editedPet.value = { ...originalPet.value };
   } else {
-    await router.push('/pets-list');
+    const pet = petsStore.loadPetById(petId.value);
+
+    if (pet) {
+      editedPet.value = { ...pet };
+    } else {
+      await router.push('/pets-list');
+    }
   }
 });
 
