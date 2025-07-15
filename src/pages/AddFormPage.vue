@@ -46,7 +46,7 @@
       </q-input>
       <div class="row no-wrap">
         <q-btn class="q-pa-md q-mr-md" label="Назад" to="pets-list" color="grey" />
-        <q-btn label="Добавить" color="black" @click="addPet" />
+        <q-btn class="q-pa-md" label="Добавить" color="black" @click="addPet" />
       </div>
     </q-form>
   </q-page>

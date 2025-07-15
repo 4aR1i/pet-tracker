@@ -43,8 +43,8 @@ export default defineConfig((/* ctx */) => {
 
     framework: {
       config: {},
-      plugins: [],
-      lang: 'ru'
+      plugins: ['LocalStorage'],
+      lang: 'ru',
     },
 
     animations: [],

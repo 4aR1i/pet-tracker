@@ -1,13 +1,9 @@
 <template>
-  <div>
+  <q-page class="q-py-lg q-px-md">
     
-  </div>
+  </q-page>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup></script>
 
-</script>
-
-<style lang='scss' scoped>
-
-</style>
+<style lang="scss" scoped></style>

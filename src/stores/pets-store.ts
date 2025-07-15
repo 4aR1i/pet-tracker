@@ -1,4 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
+import { LocalStorage } from 'quasar';
 import { type TPet } from 'src/types/Pet';
 
 export const usePetsStore = defineStore('pets', {
@@ -29,10 +30,10 @@ export const usePetsStore = defineStore('pets', {
       }
     },
     saveToLocalStorage() {
-      localStorage.setItem('pets', JSON.stringify(this.petsList));
+      LocalStorage.setItem('pets', JSON.stringify(this.petsList));
     },
     loadPets() {
-      const petsFromLS: TPet[] = JSON.parse(localStorage.getItem('pets') || '[]');
+      const petsFromLS: TPet[] = JSON.parse(LocalStorage.getItem('pets') || '[]');
       this.petsMap = petsFromLS.reduce(
         (acc, curr) => ((acc[curr.id] = curr), acc),
         {} as typeof this.petsMap,
@@ -43,7 +44,7 @@ export const usePetsStore = defineStore('pets', {
         return this.petsMap[petId];
       }
 
-      const petsFromLS: TPet[] = JSON.parse(localStorage.getItem('pets') || '[]');
+      const petsFromLS: TPet[] = JSON.parse(LocalStorage.getItem('pets') || '[]');
       const petFromLS = petsFromLS.find((pet) => pet.id === petId);
 
       if (petFromLS) {

@@ -1,15 +1,17 @@
 <template>
-  <q-list class="q-gutter-md q-pa-md">
-    <pet-mini-card v-for="pet in pets" :key="pet.id" :pet="pet" />
-  </q-list>
+  <q-page>
+    <q-list class="q-gutter-md q-pa-md">
+      <pet-mini-card v-for="pet in pets" :key="pet.id" :pet="pet" />
+    </q-list>
 
-  <q-btn
-    to="pets-add"
-    color="primary"
-    label="Добавить питомца"
-    icon-right="add"
-    class="q-pa-md q-mt-lg q-mx-auto"
-  />
+    <q-btn
+      to="pets-add"
+      color="primary"
+      label="Добавить питомца"
+      icon-right="add"
+      class="q-pa-md q-mt-lg q-mx-auto"
+    />
+  </q-page>
 </template>
 
 <script lang="ts" setup>
@@ -25,10 +27,6 @@ onMounted(() => petsStore.loadPets());
 </script>
 
 <style lang="scss" scoped>
-.page-header {
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
 .q-btn {
   display: block;
   border-radius: 24px;
