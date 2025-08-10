@@ -1,7 +1,7 @@
 export interface IVaccination {
   id: number;
   category: IVaccinationCategory | null;
-  vaccine: string;
+  title: string;
   dosage: string;
   date: string;
   status: string;
