@@ -63,10 +63,10 @@ import { typeList, genderList, isValidPastDate } from 'src/utils';
 const router = useRouter();
 const petsStore = usePetsStore();
 
-async function addPet() {
+const addPet = async () => {
   petsStore.addPet(formData.value);
   await router.push('/pets-list');
-}
+};
 
 const formData = ref({
   id: Date.now(),

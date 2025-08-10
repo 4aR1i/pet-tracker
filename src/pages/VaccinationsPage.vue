@@ -15,22 +15,19 @@
       :caption="getCategoryCount(category.key) + ' записей'"
       icon="vaccines"
       class="q-mb-sm"
-      :default-opened="!!getVaccinationsByCategory(category.key).length"
+      :default-opened="true"
     >
       <q-card>
         <q-card-section class="q-pa-0">
           <q-list bordered separator>
             <q-item
-              v-for="vaccination in getVaccinationsByCategory(category.key)"
+              v-for="vaccination in vaccinationsByCategory[category.key]"
               :key="vaccination.id"
             >
               <q-item-section>
                 <q-item-label>{{ vaccination.vaccine }}</q-item-label>
                 <q-item-label caption>Дата: {{ formatDate(vaccination.date) }}</q-item-label>
                 <q-item-label caption>Статус: {{ vaccination.status }}</q-item-label>
-                <q-item-label v-if="vaccination.vaccine" caption>
-                  Препарат: {{ vaccination.vaccine }}
-                </q-item-label>
                 <q-item-label v-if="vaccination.dosage" caption>
                   Дозировка: {{ vaccination.dosage }}
                 </q-item-label>
@@ -43,10 +40,7 @@
             </q-item>
           </q-list>
 
-          <div
-            v-if="getVaccinationsByCategory(category.key).length === 0"
-            class="text-center q-my-md q-pa-md"
-          >
+          <div v-if="getCategoryCount(category.key) === 0" class="text-center q-my-md q-pa-md">
             <q-icon name="info_outline" size="48px" color="grey" />
             <div class="text-grey">Нет записей по этой категории</div>
           </div>
@@ -71,14 +65,12 @@
               :options="categoryOptions"
               label="Категория прививки"
               filled
+              hide-bottom-space
               :rules="[(val) => !!val || 'Выберите категорию']"
               class="q-mb-sm"
             />
-
             <q-input v-model="form.vaccine" label="Препарат" filled class="q-mb-sm" />
-
             <q-input v-model="form.dosage" label="Дозировка" filled class="q-mb-sm" />
-
             <q-input
               v-model="form.date"
               mask="##.##.####"
@@ -121,51 +113,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { useVaccinationsStore } from 'src/stores/vaccinations-store';
+import { type IVaccination } from 'src/types';
 
-interface Vaccination {
-  id: number;
-  category: string;
-  vaccine: string;
-  dosage: string;
-  date: string;
-  status: string;
-}
-
-const vaccinations = ref<Vaccination[]>([
-  {
-    id: 1,
-    category: 'parasites',
-    vaccine: 'Дронтал',
-    dosage: '1 таблетка',
-    date: '15.05.2023',
-    status: 'Вовремя',
-  },
-  {
-    id: 2,
-    category: 'parasites',
-    vaccine: 'Нексгард',
-    dosage: '1 таблетка',
-    date: '20.07.2023',
-    status: 'Вовремя',
-  },
-  {
-    id: 3,
-    category: 'vaccines',
-    vaccine: 'Рабизин',
-    dosage: '1 мл',
-    date: '10.03.2023',
-    status: 'Вовремя',
-  },
-  {
-    id: 4,
-    category: 'vaccines',
-    vaccine: 'Мультифел-4',
-    dosage: '1 мл',
-    date: '15.03.2023',
-    status: 'Просрочена',
-  },
-]);
+const vaccinationsStore = useVaccinationsStore();
 
 const showDialog = ref(false);
 const isEditMode = ref(false);
@@ -184,13 +138,19 @@ const categoryOptions = vaccinationCategories.map((cat) => ({
 
 const statusOptions = ['Вовремя', 'Просрочена', 'Предстоит', 'Завершена'];
 
-const form = ref<Vaccination>({
+const form = ref<IVaccination>({
   id: 0,
-  category: '',
+  category: null,
   vaccine: '',
   dosage: '',
   date: '',
   status: 'Предстоит',
+});
+
+const vaccinations = computed(() => vaccinationsStore.vaccinationsList);
+const vaccinationsByCategory = computed(() => vaccinationsStore.vaccinationsByCategory);
+const getCategoryCount = computed(() => (category: string) => {
+  return vaccinationsStore.getCategoryCount(category);
 });
 
 const formatDate = (dateString: string): string => {
@@ -198,19 +158,10 @@ const formatDate = (dateString: string): string => {
   return dateString;
 };
 
-const getVaccinationsByCategory = (category: string) => {
-  return vaccinations.value.filter((v) => v.category === category);
-};
-
-const getCategoryCount = (category: string) => {
-  return getVaccinationsByCategory(category).length;
-};
-
 const openAddDialog = () => {
-  isEditMode.value = false;
   form.value = {
     id: 0,
-    category: '',
+    category: null,
     vaccine: '',
     dosage: '',
     date: '',
@@ -219,30 +170,90 @@ const openAddDialog = () => {
   showDialog.value = true;
 };
 
-const editVaccination = (vaccination: Vaccination) => {
+const deleteVaccination = async (id: number) => {
+  vaccinationsStore.deleteVaccination(id);
+  await cancelVaccinationNotification(id);
+};
+
+const editVaccination = (vaccination: IVaccination) => {
   isEditMode.value = true;
   form.value = { ...vaccination };
   showDialog.value = true;
 };
 
-const deleteVaccination = (id: number) => {
-  vaccinations.value = vaccinations.value.filter((v) => v.id !== id);
-};
-
-const submitForm = () => {
+const submitForm = async () => {
   if (isEditMode.value) {
-    const index = vaccinations.value.findIndex((v) => v.id === form.value.id);
-    if (index !== -1) {
-      vaccinations.value[index] = { ...form.value };
+    const oldVaccination = vaccinations.value.find((v) => v.id === form.value.id);
+    if (oldVaccination) {
+      await cancelVaccinationNotification(oldVaccination.id);
     }
+    vaccinationsStore.updateVaccination({ ...form.value });
+    await scheduleMultipleNotifications(form.value);
   } else {
-    const newId = Math.max(...vaccinations.value.map((v) => v.id), 0) + 1;
-    vaccinations.value.push({
-      ...form.value,
-      id: newId,
-    });
+    const newVaccination = vaccinationsStore.addVaccination({ ...form.value });
+    await scheduleMultipleNotifications(newVaccination);
   }
   showDialog.value = false;
+};
+
+const scheduleMultipleNotifications = async (vaccination: IVaccination) => {
+  if (!Capacitor.isNativePlatform()) return;
+
+  try {
+    const permission = await LocalNotifications.requestPermissions();
+    if (permission.display !== 'granted') return;
+
+    const [day, month, year] = vaccination.date.split('.');
+    const vaccinationDate = new Date(`${year}-${month}-${day}T13:00`);
+
+    const notify3Days = new Date(vaccinationDate);
+    notify3Days.setDate(notify3Days.getDate() - 3);
+
+    const notify1Day = new Date(vaccinationDate);
+    notify1Day.setDate(notify1Day.getDate() - 1);
+
+    const notificationsToSchedule = [];
+
+    if (notify3Days > new Date()) {
+      notificationsToSchedule.push({
+        title: 'Напоминание о прививке',
+        body: `Через 3 дня запланирована прививка: ${vaccination.vaccine}`,
+        id: vaccination.id,
+        schedule: { at: notify3Days },
+        sound: 'default',
+        extra: { vaccinationId: vaccination.id, type: 'reminder_3days' },
+      });
+    }
+
+    if (notify1Day > new Date()) {
+      notificationsToSchedule.push({
+        title: 'Напоминание о прививке',
+        body: `Завтра запланирована прививка: ${vaccination.vaccine}`,
+        id: vaccination.id,
+        schedule: { at: notify1Day },
+        sound: 'default',
+        extra: { vaccinationId: vaccination.id, type: 'reminder_1day' },
+      });
+    }
+
+    if (notificationsToSchedule.length > 0) {
+      await LocalNotifications.schedule({ notifications: notificationsToSchedule });
+    }
+  } catch (error) {
+    console.error('Ошибка при планировании уведомлений:', error);
+  }
+};
+
+const cancelVaccinationNotification = async (vaccinationId: number) => {
+  if (!Capacitor.isNativePlatform()) return;
+
+  try {
+    await LocalNotifications.cancel({
+      notifications: [{ id: vaccinationId }],
+    });
+  } catch (error) {
+    console.error('Ошибка при отмене уведомления:', error);
+  }
 };
 </script>
 
