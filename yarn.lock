@@ -81,6 +81,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/local-notifications/-/local-notifications-7.0.2.tgz#6b36c9786571cf7b167040fd2ee27a12636939c6"
   integrity sha512-U83dKWZjqpD3BBc9nSW24/3rdzpCMgVgcenOmjtc5eee0OSdE3hFAB9RmmRFZbvg0XE3BmrBt595BnzcAEeqaQ==
 
+"@capacitor/splash-screen@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/splash-screen/-/splash-screen-7.0.2.tgz#bca893c78e93b3ff8c01c336e0da726492c55f7b"
+  integrity sha512-bchh4F73CnVONm6XFEgXKEhbSEDQh2CQ0rNSoasIeJ5pf9JqHkkPS3t0Fnm33qHkLVFcaPoKPW69Y9zMpT5Vxg==
+
 "@esbuild/aix-ppc64@0.25.4":
   version "0.25.4"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.25.4.tgz#830d6476cbbca0c005136af07303646b419f1162"
