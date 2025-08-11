@@ -9,6 +9,7 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       launchAutoHide: true,
       backgroundColor: '#ffffff',
+      iosScaleType: 'CENTER'
     },
   },
 };
